@@ -1,0 +1,413 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model LoginAttemptCount{
+  id           Int         @id @default(autoincrement())
+  email String @unique
+  attempts Int @default(0)
+  last_attempt DateTime @default(now())
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  email String @unique
+  password String
+  first_name String
+  last_name String
+  phone_number String
+  created_stations Station[] @relation("created_station")
+  updated_stations Station[] @relation("updated_station")
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  role_id Int
+  role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  created_contacts Contact[]
+
+  created_vehicles Vehicle[] @relation("created_vehicles")
+  updated_vehicles Vehicle[] @relation("updated_vehicles")
+
+  created_providers Provider[] @relation("created_providers")
+  updated_providers Provider[] @relation("updated_providers")
+
+  created_routes Route[] @relation("created_routes")
+  updated_routes Route[] @relation("updated_routes")
+
+  created_prices Price[] @relation("created_prices")
+  updated_prices Price[] @relation("updated_prices")
+
+  created_schedules Schedule[] @relation("created_schedules")
+  updated_schedules Schedule[] @relation("updated_schedules")
+
+  created_queues Queue[] @relation("created_queues")
+  updated_queues Queue[] @relation("updated_queues")
+
+  created_ticket_purchases TicketPurchaseTransaction[]
+  created_driver_payments DriverPaymentTransaction[]
+
+
+  ticketer_requesting TicketerToCashierTransaction[] @relation("ticketer")
+  cashier_requested TicketerToCashierTransaction[] @relation("cashier")
+
+  created_roles Role[] @relation("created_roles")
+
+  ticketer_audited TicketerAudit[] @relation("ticketer_audited")
+  auditor TicketerAudit[] @relation("auditor")
+  is_deleted Boolean @default(false)
+  manager_requests ManagerRequest[] @relation("manager_requests_sent")
+}
+
+
+model Station {
+  id           Int         @id @default(autoincrement())
+  region String
+  name String
+  lat String?
+  long String?
+  creator_id Int?
+  creator User? @relation(name: "created_station",fields: [creator_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updating_id Int?
+  updator User? @relation(name: "updated_station", fields: [updating_id], references: [id], onDelete: Cascade)
+  updated_at DateTime @default(now())
+  users User[]
+  vehicles Vehicle[]
+  provider Provider[]
+  routes Route[]
+  prices Price[]
+  schedule Schedule[]
+  queues Queue[]
+  ticket_purchase_transactions TicketPurchaseTransaction[]
+  driver_payment_transaction DriverPaymentTransaction[]
+  ticketer_to_cashier_transaction TicketerToCashierTransaction[]
+  roles Role[]
+  ticketer_audit TicketerAudit[]
+  contact Contact[]
+  is_deleted Boolean @default(false)
+}
+
+model Contact{
+  id           Int         @id @default(autoincrement())
+  phone_number String
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  creator_id Int
+  creator User @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  is_deleted Boolean @default(false)
+ }
+
+model Vehicle{
+  id           Int         @id @default(autoincrement())
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  plate_number String @unique
+  seat_capacity Int?
+  region String
+  side_number String?
+  creator_id Int?
+  creator User? @relation(name: "created_vehicles",fields: [creator_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updating_id Int?
+  updator User? @relation(name: "updated_vehicles", fields: [updating_id], references: [id], onDelete: Cascade)
+  updated_at DateTime @default(now())
+  level_id Int
+  level VehicleLevel @relation(fields: [level_id], references: [id])
+  provider_id Int
+  provider Provider @relation(fields: [provider_id],references: [id])
+  queues Queue[]
+  is_deleted Boolean @default(false)
+}
+
+model Provider{
+  id           Int         @id @default(autoincrement())
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  name String
+  region String
+  phone_number String?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  creator_id Int?
+  creator User? @relation(name: "created_providers",fields: [creator_id], references: [id], onDelete: Cascade)
+  updating_id Int?
+  updator User? @relation(name: "updated_providers", fields: [updating_id], references: [id], onDelete: Cascade)
+  vehicles Vehicle[]
+  is_deleted Boolean @default(false)
+}
+
+model VehicleLevel{
+  id           Int         @id @default(autoincrement())
+  name String
+  level Int
+  description String
+  vehicles Vehicle[]
+  prices Price[]
+  is_deleted Boolean @default(false)
+}
+
+model Route{
+  id           Int         @id @default(autoincrement())
+  destination_name String
+  destination_region String
+  destination_latitude String?
+  destination_longitude String?
+  distance Float @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  creator_id Int?
+  creator User? @relation(name: "created_routes",fields: [creator_id], references: [id], onDelete: Cascade)
+  updating_id Int?
+  updator User? @relation(name: "updated_routes", fields: [updating_id], references: [id], onDelete: Cascade)
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id])
+  prices Price[]
+  schedules Schedule[]
+  is_deleted Boolean @default(false)
+}
+
+model Price{
+  id           Int         @id @default(autoincrement())
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  vehicle_level_id Int
+  vehicle_level VehicleLevel @relation(fields: [vehicle_level_id], references: [id], onDelete: Cascade)
+  route_id Int
+  route Route @relation(fields: [route_id],references: [id], onDelete: Cascade)
+  price Float
+  service_charge Float
+  total_price Float
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  creator_id Int?
+  creator User? @relation(name: "created_prices",fields: [creator_id], references: [id], onDelete: Cascade)
+  updating_id Int?
+  updator User? @relation(name: "updated_prices", fields: [updating_id], references: [id], onDelete: Cascade)
+  queues Queue[]
+  vat Float @default(0)
+  is_deleted Boolean @default(false)
+}
+
+model Schedule {
+  id           Int         @id @default(autoincrement())
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id])
+  route_id Int
+  route Route @relation(fields: [route_id],references: [id])
+  plate_number String
+  creator_id Int?
+  creator User? @relation(name: "created_schedules",fields: [creator_id], references: [id], onDelete: Cascade)
+  updating_id Int?
+  updator User? @relation(name: "updated_schedules", fields: [updating_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  expired Boolean @default(false)
+  is_deleted Boolean @default(false)
+}
+model ManagerRequest{
+  id           Int         @id @default(autoincrement())
+  amount Float
+  manager_id Int?
+  manager User? @relation(name: "manager_requests_sent",fields: [manager_id], references: [id], onDelete: Cascade)
+  date DateTime @default(now())
+  created_at DateTime @default(now())
+  is_deleted Boolean @default(false)
+}
+
+model Queue{
+  id           Int         @id @default(autoincrement())
+  vehicle_id Int
+  vehicle Vehicle @relation(fields: [vehicle_id],references: [id], onDelete: Cascade)
+  price_id Int
+  price Price @relation(fields: [price_id], references: [id], onDelete: Cascade)
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  creator_id Int?
+  creator User? @relation(name: "created_queues",fields: [creator_id], references: [id], onDelete: Cascade)
+  updating_id Int?
+  updator User? @relation(name: "updated_queues", fields: [updating_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  created_at_app DateTime?
+  booked_seat_count Int
+  checked_out Boolean
+  paid Boolean
+  enabled Boolean
+  seat_full Boolean
+  order Int
+  seat_capacity Int @default(0)
+  ticket_purchase_transactions TicketPurchaseTransaction[]
+  driver_payment_transaction DriverPaymentTransaction[]
+  is_deleted Boolean @default(false)
+
+  @@index([created_at])
+}
+
+enum TicketPurchaseTypes {
+  BOOK
+  REPRINT
+  EXTRA
+}
+
+model TicketPurchaseTransaction{
+  id           Int         @id @default(autoincrement())
+  queue_id Int
+  queue Queue @relation(fields: [queue_id],references: [id], onDelete: Cascade)
+  amount Float
+  type TicketPurchaseTypes @default(BOOK)
+  ticket_count Float
+  creator_id Int
+  creator User @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  passenger_detail String?
+  is_deleted Boolean @default(false)
+}
+
+model DriverPaymentTransaction{
+  id           Int         @id @default(autoincrement())
+  queue_id Int @unique
+  queue Queue @relation(fields: [queue_id],references: [id],onDelete: Cascade)
+  amount Float
+  creator_id Int
+  creator User @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  is_deleted Boolean @default(false)
+}
+
+enum TicketerToCashierTransactionTypes {
+  CASH
+  TICKET
+}
+enum TicketerToCashierTransactionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model TicketerToCashierTransaction {
+  id           Int         @id @default(autoincrement())
+  ticketer_id Int
+  cashier_id Int
+  type   TicketerToCashierTransactionTypes
+  amount Float
+  ticket_price Float?
+  ticketer User @relation(name: "ticketer", fields: [ticketer_id],references: [id], onDelete: Cascade)
+  cashier User @relation(name: "cashier", fields: [cashier_id],references: [id], onDelete: Cascade)
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  status TicketerToCashierTransactionStatus @default(PENDING)
+  is_deleted Boolean @default(false)
+}
+
+enum Privileges {
+  StationCreate
+  StationView
+  StationUpdate
+  StationDelete
+
+  VehicleCreate
+  VehicleView
+  VehicleUpdate
+  VehicleDelete
+
+  AcceptTicketerRequest
+  ViewCashiers
+
+  RouteCreate
+  RouteView
+  RouteUpdate
+  RouteDelete
+
+  PriceCreate
+  PriceView
+  PriceUpdate
+  PriceDelete
+
+  ProviderCreate
+  ProviderView
+  ProviderUpdate
+  ProviderDelete
+
+  UserCreate
+  UserView
+  UserUpdate
+  UserDelete
+
+  UpdateSelf
+
+  RoleCreate
+  RoleView
+  RoleUpdate
+  RoleDelete
+
+  ScheduleCreate
+  ScheduleView
+  ScheduleUpdate
+  ScheduleDelete
+
+  QueueCreate
+  QueueView
+  QueueUpdate
+  QueueDelete
+
+  TicketBook
+  TicketReprint
+  TicketExtraPrint
+
+  PayDriver
+  RequestToCashier
+  AuditTicketer
+  AuditCashier
+  AuditManager
+
+  ViewRequestToCashierHistory
+  ViewFinanceAnalytics
+
+  ViewRegionalAnalytics
+
+  StationDriverManagement
+  RegionalDriverManagement
+  DriverManagementCashier
+}
+
+model Role {
+  id           Int         @id @default(autoincrement())
+  name String
+  privileges Privileges[] @default([])
+  creator_id Int?
+  creator User? @relation(name: "created_roles", fields: [creator_id], references: [id], onDelete: Cascade)
+  station_id Int
+  station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updatedAt  DateTime   @updatedAt
+  users User[]
+  is_deleted Boolean @default(false)
+}
+
+enum AuditType {
+  TICKETER
+  CASHIER
+}
+
+model TicketerAudit {
+    id           Int         @id @default(autoincrement())
+    audited_id Int
+    ticketer User @relation(name:"ticketer_audited", fields: [audited_id],references: [id], onDelete: Cascade)
+    created_at DateTime @default(now())
+    balance Float
+    auditer_id Int
+    audit_type AuditType
+    auditer User @relation(name:"auditor", fields: [auditer_id],references: [id], onDelete: Cascade)
+    station_id Int
+    station Station @relation(fields: [station_id], references: [id], onDelete: Cascade)
+    is_deleted Boolean @default(false)
+}
