@@ -1,12 +1,12 @@
 import { db } from "@/lib/db";
-import { filterDateValues, getDate } from "@/lib/utils";
+import { getDate } from "@/lib/utils";
 import {
   createTRPCRouter,
   protectedProcedure,
   viewAnalyticsProcedure,
   viewRegionalOrStationAnalyticsProcedure,
 } from "@/server/trpc";
-import { startOfDay, endOfDay, addDays, subDays } from "date-fns";
+import { startOfDay, startOfToday, endOfDay, addDays, subDays } from "date-fns";
 import { z } from "zod";
 
 export const analyticsRouter = createTRPCRouter({
@@ -64,8 +64,6 @@ export const analyticsRouter = createTRPCRouter({
     });
 
     const summaryArray: any = [];
-
-    // I love adyam so so so much!!!
 
     // Create a summary object for each station
     todayQueues.forEach((item) => {
@@ -259,7 +257,13 @@ export const analyticsRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { today, endOfDay, startOfDay } = getDate();
-
+      const filterDateValues = {
+        //@ts-ignore
+        today: startOfToday(),
+        "this-week": new Date(new Date().setDate(new Date().getDate() - 7)),
+        "this-month": new Date(new Date().setDate(new Date().getDate() - 30)),
+        "this-year": new Date(new Date().setDate(new Date().getDate() - 365)),
+      };
       const filteredTotal = await db.ticketPurchaseTransaction.findMany({
         where: {
           created_at: {
@@ -485,8 +489,13 @@ export const analyticsRouter = createTRPCRouter({
       z.object({ station_id: z.number(), filterDate: z.string().optional() })
     )
     .query(async ({ ctx, input }) => {
-      console.log(input.filterDate);
-
+      const filterDateValues = {
+        //@ts-ignore
+        today: startOfToday(),
+        "this-week": new Date(new Date().setDate(new Date().getDate() - 7)),
+        "this-month": new Date(new Date().setDate(new Date().getDate() - 30)),
+        "this-year": new Date(new Date().setDate(new Date().getDate() - 365)),
+      };
       const { today, endOfDay, startOfDay } = getDate();
 
       const routes = await db.route.count({

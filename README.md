@@ -50,7 +50,5 @@ pnpm dev  # Start the dev environment
 pnpm build # Build the NextJS project
 
 ```
-
-## Disclaimer
-
 This website and its associated codebase are the intellectual property of [Bitophiyaa](https://bitophiyaa.com). All rights reserved. The code, design, and content of this website are not open-source and may not be reproduced, distributed, or used for any purpose without explicit permission from [Bitophiyaa](https://bitophiyaa.com).
+

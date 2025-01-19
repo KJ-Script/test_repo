@@ -47,7 +47,7 @@ const AuditCashierTable = ({
     {
       accessorKey: "cashier",
       header: "Cashier",
-      accessorFn: (row) => row.cashier.email,
+      accessorFn: (row) => row?.cashier?.email,
       cell: (info) => info.getValue(),
     },
     {
@@ -65,7 +65,7 @@ const AuditCashierTable = ({
     {
       accessorKey: "balance",
       header: "Balance",
-      accessorFn: (row) => row.balance?.toFixed(2),
+      accessorFn: (row) => row?.balance?.toFixed(2),
       cell: (info) => info.getValue(),
     },
     {

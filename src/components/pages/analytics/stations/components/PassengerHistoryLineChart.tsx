@@ -14,19 +14,21 @@ import {
   YAxis,
 } from "recharts";
 import { DatePickerWithRange } from "../../filter/DateRange";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import PassengerHistoryForStationPDF from "../../exports/PassengerHistoryForStationPDF";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { subDays } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export function PassengerHistoryLineChart({
   stationId,
 }: {
   stationId: number;
 }) {
+  const doc = new jsPDF();
+
   const [date, setDate] = useState<DateRange>({
     //@ts-ignore
     from: subDays(new Date(Date.now()), 30),
@@ -53,23 +55,49 @@ export function PassengerHistoryLineChart({
       })
     : [];
 
+  const exportPdf = () => {
+    const header = [["Date", "Passengers", "Vehicles"]];
+    const data = chartData.map((h) => [h.date, h.passengers, h.vehicle_count]);
+
+    const startD = `${date.from?.getFullYear()}-${
+      date.from?.getMonth()! + 1
+    }-${date.from?.getDate()}`;
+    const endD = `${date.to?.getFullYear()}-${
+      date.to?.getMonth()! + 1
+    }-${date.to?.getDate()}`;
+    const titleHeight = 20;
+
+    doc.setFontSize(16);
+    doc.text(
+      `Passengers vs Vehicles History from ${startD} to ${endD}`,
+      14,
+      15
+    );
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+      head: header,
+      //@ts-ignore
+      body: data,
+      startY: titleHeight,
+    });
+    if (!date?.from || !date?.to) {
+      //@ts-ignore
+      doc.save(`passenger_vs_vehicles_History.pdf`);
+      return;
+    }
+
+    //@ts-ignore
+    doc.save(`passenger_vs_vehicles_History-${startD}-to-${endD}.pdf`);
+  };
+
   return (
     <Card className="col-span-7">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end space-y-1.5 p-6">
         <CardTitle>Passengers vs Vehicles</CardTitle>
         <div className="flex flex-col lg:flex-row items-start lg:items-end gap-2 mb-2">
           <DatePickerWithRange date={date} setDate={setDate} />
-          <PDFDownloadLink
-            document={
-              <PassengerHistoryForStationPDF
-                history={chartData}
-                startDate={date?.from + ""}
-                endDate={date?.to + ""}
-              />
-            }
-          >
-            <Button size="sm">Export</Button>
-          </PDFDownloadLink>
+          <Button onClick={exportPdf}>Export</Button>
         </div>
       </div>
       <CardContent className="pl-2">

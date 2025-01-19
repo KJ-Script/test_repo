@@ -97,6 +97,7 @@ const enforceUserIsAuthed = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -135,6 +136,7 @@ const enforceAppAuth = middleware(async ({ ctx, next }) => {
 
   const user = await db.user.findUnique({
     where: {
+      is_deleted: false,
       //@ts-ignore
       id: payload.user_id,
     },
@@ -162,6 +164,7 @@ const enforceStationCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -190,6 +193,7 @@ const enforceStationViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -219,6 +223,7 @@ const enforceStationUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -247,6 +252,7 @@ const enforceStationDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -275,6 +281,7 @@ const enforceVehicleCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -303,6 +310,7 @@ const enforceVehicleViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -331,6 +339,7 @@ const enforceVehicleUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -359,6 +368,7 @@ const enforceVehicleDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -387,6 +397,7 @@ const enforceRouteCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -415,6 +426,7 @@ const enforceRouteViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -444,6 +456,7 @@ const enforceRouteUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -472,6 +485,7 @@ const enforceRouteDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -500,6 +514,7 @@ const enforcePriceCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -528,6 +543,7 @@ const enforcePriceViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -556,6 +572,7 @@ const enforcePriceUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -584,6 +601,7 @@ const enforcePriceDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -612,6 +630,7 @@ const enforceProviderCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -640,6 +659,7 @@ const enforceProviderViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -669,6 +689,7 @@ const enforceProviderUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -697,6 +718,7 @@ const enforceProviderDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -725,6 +747,7 @@ const enforceUserCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -753,6 +776,7 @@ const enforceUserViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -782,6 +806,7 @@ const enforceUserUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -810,6 +835,7 @@ const enforceUserDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -838,6 +864,7 @@ const enforceRoleCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -866,6 +893,7 @@ const enforceRoleViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -894,6 +922,7 @@ const enforceRoleUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -922,6 +951,7 @@ const enforceRoleDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -950,6 +980,7 @@ const enforceScheduleCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -978,6 +1009,7 @@ const enforceScheduleViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1007,6 +1039,7 @@ const enforceScheduleUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1035,6 +1068,7 @@ const enforceScheduleDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1063,6 +1097,7 @@ const enforceQueueCreatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1091,6 +1126,7 @@ const enforceQueueViewPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1120,6 +1156,7 @@ const enforceQueueUpdatePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1148,6 +1185,7 @@ const enforceQueueDeletePrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1176,6 +1214,7 @@ const enforceTicketBookPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1204,6 +1243,7 @@ const enforceTicketReprintPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1232,6 +1272,7 @@ const enforceTicketExtraPrintPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1260,6 +1301,7 @@ const enforcePayDriverPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1288,6 +1330,7 @@ const enforceRequestToCashierPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1316,6 +1359,7 @@ const enforceViewCashiersPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1346,6 +1390,7 @@ const enforceViewRequestToCashierHistoryPrivilege = middleware(
     const userDetail = await db.user.findUnique({
       where: {
         email: ctx.session.user.email,
+        is_deleted: false,
       },
       select: {
         password: false,
@@ -1376,6 +1421,7 @@ const enforceAcceptTicketerRequestPrivilege = middleware(
     const userDetail = await db.user.findUnique({
       where: {
         email: ctx.session.user.email,
+        is_deleted: false,
       },
       select: {
         password: false,
@@ -1403,6 +1449,7 @@ const enforceAuditTicketerPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1430,6 +1477,7 @@ const enforceAuditCashierPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1457,6 +1505,7 @@ const enforceAuditManagerPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1484,6 +1533,7 @@ const enforceViewAnalyticsPrivilege = middleware(async ({ ctx, next }) => {
   }
   const userDetail = await db.user.findUnique({
     where: {
+      is_deleted: false,
       email: ctx.session.user.email,
     },
     select: {
@@ -1518,6 +1568,7 @@ const enforceRegionalOrStationAnalyticsPrivilege = middleware(
     const userDetail = await db.user.findUnique({
       where: {
         email: ctx.session.user.email,
+        is_deleted: false,
       },
       select: {
         station: true,
@@ -1554,6 +1605,7 @@ const enforceViewRegionalAnalyticsPrivilege = middleware(
     const userDetail = await db.user.findUnique({
       where: {
         email: ctx.session.user.email,
+        is_deleted: false,
       },
       select: {
         password: false,

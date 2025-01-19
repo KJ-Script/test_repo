@@ -9,7 +9,14 @@ import bcrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
 import { User, Vehicle } from "@prisma/client";
 import { getDate } from "@/lib/utils";
-import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
+import {
+  addDays,
+  endOfDay,
+  startOfDay,
+  subDays,
+  startOfToday,
+  getMonth,
+} from "date-fns";
 import jwt from "jsonwebtoken";
 
 export const mobileRouter = createTRPCRouter({
@@ -194,6 +201,14 @@ export const mobileRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const filterDateValues = {
+        //@ts-ignore
+        today: startOfToday(),
+        "this-week": new Date(new Date().setDate(new Date().getDate() - 7)),
+        "this-month": new Date(new Date().setDate(new Date().getDate() - 30)),
+        "this-year": new Date(new Date().setDate(new Date().getDate() - 365)),
+      };
+
       if (input.stationId) {
         const vehicleHistory = await db.queue.findMany({
           where: {
@@ -1340,6 +1355,116 @@ export const mobileRouter = createTRPCRouter({
       return vehiclePerformanceSummary;
     }),
 
+  getMonthlyVehicleCheckoutPerRoute: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        month: z.string(),
+        year: z.string(),
+        route_id: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!process.env.APP_AUTH_TOKEN) {
+        throw new Error("App token not provided");
+      }
+      if (!input.token) {
+        throw new Error("Not authorized");
+      }
+
+      const user_session: any = jwt.verify(
+        input.token,
+        process.env.APP_AUTH_TOKEN!
+      );
+
+      if (!user_session?.user_id) {
+        throw new Error("Not authorized");
+      }
+
+      const user = await db.user.findUnique({
+        where: {
+          id: user_session.user_id!,
+          is_deleted: false,
+        },
+        select: {
+          password: true,
+          role: true,
+          station: true,
+        },
+      });
+      if (!user) {
+        throw new Error("Not authorized");
+      }
+      const startDate = new Date(
+        parseInt(input.year),
+        parseInt(input.month) - 1,
+        1
+      );
+      const endDate = new Date(parseInt(input.year), parseInt(input.month), 0);
+      const daysInMonth = endDate.getDate();
+
+      const queues = await db.queue.findMany({
+        where: {
+          created_at: {
+            gte: startDate,
+            lte: endDate,
+          },
+          price: {
+            route_id: input.route_id,
+          },
+          station_id: user.station.id,
+          paid: true,
+        },
+        select: {
+          vehicle: {
+            select: {
+              plate_number: true,
+            },
+          },
+          created_at: true,
+        },
+        orderBy: {
+          created_at: "asc",
+        },
+      });
+
+      const route = await db.route.findUnique({
+        where: { id: input.route_id },
+        select: { destination_name: true },
+      });
+
+      if (!route) {
+        throw new Error("Route not found");
+      }
+
+      const vehicleData = new Map<string, number[]>();
+
+      queues.forEach((queue) => {
+        const plateNumber = queue.vehicle.plate_number;
+        const day = queue.created_at.getDate() - 1; // Adjust to 0-based index
+
+        if (!vehicleData.has(plateNumber)) {
+          vehicleData.set(plateNumber, new Array(daysInMonth).fill(0));
+        }
+
+        vehicleData.get(plateNumber)![day]++;
+      });
+
+      const vehicle_data = Array.from(
+        vehicleData,
+        ([plateNumber, dailyCheckout]) => ({
+          plateNumber,
+          dailyCheckout,
+        })
+      );
+
+      return {
+        route: route.destination_name,
+        month: new Date(startDate).toLocaleString("default", { month: "long" }),
+        year: input.year,
+        vehicle_data,
+      };
+    }),
   getJourneyHistory: publicProcedure
     .input(
       z.object({
@@ -1370,6 +1495,7 @@ export const mobileRouter = createTRPCRouter({
       const user = await db.user.findUnique({
         where: {
           id: user_session.user_id!,
+          is_deleted: false,
         },
         select: {
           password: true,

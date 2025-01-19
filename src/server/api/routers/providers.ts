@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { filterDateValues } from "@/lib/utils";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -9,7 +8,7 @@ import {
   providerViewProcedure,
   viewAnalyticsProcedure,
 } from "@/server/trpc";
-import { endOfDay, startOfDay } from "date-fns";
+import { endOfDay, startOfDay, startOfToday } from "date-fns";
 import { z } from "zod";
 
 export const providerRouter = createTRPCRouter({
@@ -70,6 +69,13 @@ export const providerRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      const filterDateValues = {
+        //@ts-ignore
+        today: startOfToday(),
+        "this-week": new Date(new Date().setDate(new Date().getDate() - 7)),
+        "this-month": new Date(new Date().setDate(new Date().getDate() - 30)),
+        "this-year": new Date(new Date().setDate(new Date().getDate() - 365)),
+      };
       const vehicleHistory = await db.queue.findMany({
         where: {
           is_deleted: false,

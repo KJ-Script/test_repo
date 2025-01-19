@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { filterDateValues, getDate } from "@/lib/utils";
+import { getDate } from "@/lib/utils";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -10,7 +10,7 @@ import {
 } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { startOfDay, endOfDay, addDays, subDays } from "date-fns";
+import { startOfDay, endOfDay, addDays, subDays, startOfToday } from "date-fns";
 import { getCsrfToken } from "next-auth/react";
 
 export const queueRouter = createTRPCRouter({
@@ -127,6 +127,13 @@ export const queueRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
+      const filterDateValues = {
+        //@ts-ignore
+        today: startOfToday(),
+        "this-week": new Date(new Date().setDate(new Date().getDate() - 7)),
+        "this-month": new Date(new Date().setDate(new Date().getDate() - 30)),
+        "this-year": new Date(new Date().setDate(new Date().getDate() - 365)),
+      };
       const queue = await db.queue.findMany({
         orderBy: {
           id: "desc",

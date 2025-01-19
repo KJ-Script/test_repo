@@ -100,8 +100,6 @@ export const roleRouter = createTRPCRouter({
     );
   }),
   getAll: roleViewProcedure.query(async ({ ctx }) => {
-    console.log(!ctx.session.user.role.privileges.includes("StationCreate"));
-
     const roles = await db.role.findMany({
       where: {
         ...(!ctx.session.user.role.privileges.includes("StationCreate") && {

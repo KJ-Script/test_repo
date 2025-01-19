@@ -64,7 +64,6 @@ const SignInForm = ({ csrfToken }: { csrfToken: string | undefined }) => {
       const attempts = await axios.post(`/api/user/login-attempt/check`, {
         email: values.email,
       });
-
       if (attempts.data.remaining_attempts == 0) {
         setRemainingAttempts(attempts.data.remaining_attempts);
         if (attempts.data.timeLeft) {

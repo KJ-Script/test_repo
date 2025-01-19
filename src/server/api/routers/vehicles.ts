@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { filterDateValues } from "@/lib/utils";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -11,7 +10,7 @@ import {
 } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { startOfDay, endOfDay, addDays, subDays } from "date-fns";
+import { startOfDay, endOfDay, addDays, subDays, startOfToday } from "date-fns";
 
 export const vehicleRouter = createTRPCRouter({
   getAll: vehicleViewProcedure.query(async ({ ctx }) => {
@@ -122,6 +121,13 @@ export const vehicleRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      const filterDateValues = {
+        //@ts-ignore
+        today: startOfToday(),
+        "this-week": new Date(new Date().setDate(new Date().getDate() - 7)),
+        "this-month": new Date(new Date().setDate(new Date().getDate() - 30)),
+        "this-year": new Date(new Date().setDate(new Date().getDate() - 365)),
+      };
       if (input.stationId) {
         const vehicleHistory = await db.queue.findMany({
           where: {
@@ -133,7 +139,7 @@ export const vehicleRouter = createTRPCRouter({
                     region: ctx.session.user.station.region,
                   },
                 }),
-            ...(input.filter_type == "interval" && {
+            ...(input.filter_type === "interval" && {
               created_at: {
                 gte:
                   //@ts-ignore

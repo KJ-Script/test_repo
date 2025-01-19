@@ -165,6 +165,7 @@ const VehiclePerformanceFilter = ({
           ) : null}
           <Select
             onValueChange={(value: FilterDateKey) => {
+              console.log(value);
               if (value == "interval") {
                 setOpenFilter(true);
               } else {
